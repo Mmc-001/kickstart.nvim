@@ -99,7 +99,7 @@ do
   vim.g.maplocalleader = ' '
 
   -- Set to true if you have a Nerd Font installed and selected in the terminal
-  vim.g.have_nerd_font = false
+  vim.g.have_nerd_font = true
 
   -- [[ Setting options ]]
   --  See `:help vim.o`
@@ -194,7 +194,7 @@ do
     underline = { severity = { min = vim.diagnostic.severity.WARN } },
 
     -- Can switch between these as you prefer
-    virtual_text = true, -- Text shows up at the end of the line
+    virtual_text =  true, -- Text shows up at the end of the line
     virtual_lines = false, -- Text shows up underneath the line, with virtual lines
 
     -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
@@ -220,10 +220,10 @@ do
   vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
   -- TIP: Disable arrow keys in normal mode
-  -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
-  -- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
-  -- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
-  -- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+  vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!"<CR>')
+  vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!"<CR>')
+  vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!"<CR>')
+  vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!"<CR>')
 
   -- Keybinds to make split navigation easier.
   --  Use CTRL+<hjkl> to switch between windows
@@ -434,7 +434,7 @@ do
   -- Load the colorscheme here.
   -- Like many other themes, this one has different styles, and you could load
   -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  vim.cmd.colorscheme 'tokyonight-night'
+  vim.cmd.colorscheme 'default'
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
@@ -472,6 +472,10 @@ do
   -- - sd'   - [S]urround [D]elete [']quotes
   -- - sr)'  - [S]urround [R]eplace [)] [']
   require('mini.surround').setup()
+
+  -- Commenting
+  require('mini.comment').setup()   -- gcc / gc — commenting, zero extra dependency
+  require('mini.pairs').setup()     -- autopairs, replaces kickstart.plugins.autopairs entirely
 
   -- Simple and easy statusline.
   --  You could remove this setup call if you don't like it,
@@ -603,7 +607,7 @@ do
     -- You can pass additional configuration to Telescope to change the theme, layout, etc.
     builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
       winblend = 10,
-      previewer = false,
+      previewer = true,
     })
   end, { desc = '[/] Fuzzily search in current buffer' })
 
@@ -728,16 +732,32 @@ do
     end,
   })
 
+  local function get_python_path()
+    if vim.env.VIRTUAL_ENV then
+      return vim.env.VIRTUAL_ENV .. '/bin/python'
+    elseif vim.env.CONDA_PREFIX then
+      return vim.env.CONDA_PREFIX .. '/bin/python'
+    end
+    return vim.fn.exepath 'python3' or vim.fn.exepath 'python' or 'python'
+  end
+
   -- Enable the following language servers
   --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
   --  See `:help lsp-config` for information about keys and how to configure
   ---@type table<string, vim.lsp.Config>
   local servers = {
-    -- clangd = {},
+    clangd = {},
     -- gopls = {},
     -- pyright = {},
     -- tsc = {},
-    --
+    basedpyright = {
+      settings = {
+        basedpyright = {
+          analysis = { autoSearchPaths = true, diagnosticMode = 'openFilesOnly' },
+        },
+        python = { pythonPath = get_python_path() },
+      },
+    },
     -- Some languages (like rust) have entire language plugins that can be useful:
     --    https://github.com/mrcjkb/rustaceanvim
     --
@@ -749,34 +769,51 @@ do
     -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
       on_init = function(client)
-        client.server_capabilities.documentFormattingProvider = false -- Disable formatting (formatting is done by stylua)
-
+        client.server_capabilities.documentFormattingProvider = false
         if client.workspace_folders then
           local path = client.workspace_folders[1].name
           if path ~= vim.fn.stdpath 'config' and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc')) then return end
         end
-
         local current_settings = client.config.settings --[[@as lspconfig.settings.lua_ls]]
         client.config.settings.Lua = vim.tbl_deep_extend('force', current_settings.Lua, {
-          runtime = {
-            version = 'LuaJIT',
-            path = { 'lua/?.lua', 'lua/?/init.lua' },
-          },
-          workspace = {
-            checkThirdParty = false,
-            -- NOTE: this is a lot slower and will cause issues when working on your own configuration.
-            --  See https://github.com/neovim/nvim-lspconfig/issues/3189
-            library = vim.api.nvim_get_runtime_file('', true),
-          },
+          runtime = { version = 'LuaJIT' },
+          workspace = { checkThirdParty = false },  -- library removed; lazydev handles this now
         })
       end,
-      ---@type lspconfig.settings.lua_ls
       settings = {
-        Lua = {
-          format = { enable = false }, -- Disable formatting (formatting is done by stylua)
-        },
+        Lua = { format = { enable = false } },
       },
     },
+    -- lua_ls = {
+    --   on_init = function(client)
+    --     client.server_capabilities.documentFormattingProvider = false -- Disable formatting (formatting is done by stylua)
+    --
+    --     if client.workspace_folders then
+    --       local path = client.workspace_folders[1].name
+    --       if path ~= vim.fn.stdpath 'config' and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc')) then return end
+    --     end
+    --
+    --     local current_settings = client.config.settings --[[@as lspconfig.settings.lua_ls]]
+    --     client.config.settings.Lua = vim.tbl_deep_extend('force', current_settings.Lua, {
+    --       runtime = {
+    --         version = 'LuaJIT',
+    --         path = { 'lua/?.lua', 'lua/?/init.lua' },
+    --       },
+    --       workspace = {
+    --         checkThirdParty = false,
+    --         -- NOTE: this is a lot slower and will cause issues when working on your own configuration.
+    --         --  See https://github.com/neovim/nvim-lspconfig/issues/3189
+    --         library = vim.api.nvim_get_runtime_file('', true),
+    --       },
+    --     })
+    --   end,
+    --   ---@type lspconfig.settings.lua_ls
+    --   settings = {
+    --     Lua = {
+    --       format = { enable = false }, -- Disable formatting (formatting is done by stylua)
+    --     },
+    -- },
+    -- },
   }
 
   vim.pack.add {
@@ -807,6 +844,11 @@ do
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+
+  vim.pack.add { gh 'folke/lazydev.nvim' }
+  require('lazydev').setup {
+    library = { { path = '${3rd}/luv/library', words = { 'vim%.uv' } } },
+  }
 
   for name, server in pairs(servers) do
     vim.lsp.config(name, server)
@@ -896,7 +938,7 @@ do
       -- <c-k>: Toggle signature help
       --
       -- See `:help blink-cmp-config-keymap` for defining your own keymap
-      preset = 'default',
+      preset = 'super-tab',
 
       -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
       --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -916,6 +958,10 @@ do
 
     sources = {
       default = { 'lsp', 'path', 'snippets' },
+      per_filetype = { lua = { 'lazydev', 'lsp', 'path', 'snippets' } },
+      providers = {
+        lazydev = { name = 'LazyDev', module = 'lazydev.integrations.blink', score_offset = 100 },
+      },
     },
 
     snippets = { preset = 'luasnip' },
@@ -948,7 +994,7 @@ do
   vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
   -- Ensure basic parsers are installed
-  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'python', 'query', 'vim', 'vimdoc' }
   require('nvim-treesitter').install(parsers)
 
   ---@param buf integer
@@ -1014,11 +1060,26 @@ do
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug'
-  -- require 'kickstart.plugins.indent_line'
-  -- require 'kickstart.plugins.lint'
+  require 'kickstart.plugins.debug'
+  require 'kickstart.plugins.indent_line'
+  require 'kickstart.plugins.lint'
   -- require 'kickstart.plugins.autopairs'
   -- require 'kickstart.plugins.neo-tree'
+  vim.pack.add { gh 'stevearc/oil.nvim' }
+  require('oil').setup {
+    -- See :help oil-columns
+    columns = {
+      "icon",
+      -- "permissions",
+      "size",
+      "mtime",
+  },
+    view_options = {
+      show_hidden = true,
+      natural_order = "fast",
+    },
+  }
+  vim.keymap.set('n', '-', '<cmd>Oil<CR>', { desc = 'Open parent directory' })
 
   -- NOTE: You can add your own plugins, configuration, etc. in `lua/custom/plugins/*.lua`.
   --
