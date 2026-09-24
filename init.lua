@@ -110,7 +110,7 @@ do
   vim.o.number = true
   -- You can also add relative line numbers, to help with jumping.
   --  Experiment for yourself to see if you like it!
-  -- vim.o.relativenumber = true
+  vim.o.relativenumber = true
 
   -- Enable mouse mode, can be useful for resizing splits for example!
   vim.o.mouse = 'a'
@@ -165,7 +165,7 @@ do
   vim.o.cursorline = true
 
   -- Minimal number of screen lines to keep above and below the cursor.
-  vim.o.scrolloff = 10
+  vim.o.scrolloff = 8
 
   -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
   -- instead raise a dialog asking if you wish to save the current file(s)
@@ -424,21 +424,32 @@ do
   --
   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
   vim.pack.add { gh 'folke/tokyonight.nvim' }
-  ---@diagnostic disable-next-line: missing-fields
+  -- ---@diagnostic disable-next-line: missing-fields
   require('tokyonight').setup {
     styles = {
       comments = { italic = false }, -- Disable italics in comments
     },
   }
 
+  vim.pack.add { gh 'Mofiqul/vscode.nvim' }
+  require('vscode').setup {
+    transparent = true,
+    italic_comments = false,
+  }
+
   -- Load the colorscheme here.
   -- Like many other themes, this one has different styles, and you could load
   -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  vim.cmd.colorscheme 'default'
+  -- vim.cmd.colorscheme 'tokyonight'
+  vim.cmd.colorscheme 'default' -- Default colorscheme, no extra plugin needed
+  -- vim.cmd.colorscheme 'vscode' -- VS Code colorscheme
+
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
-  require('todo-comments').setup { signs = false }
+  require('todo-comments').setup {
+    signs = true, -- show icons in the signs column
+  }
 
   -- [[ mini.nvim ]]
   --  A collection of various small independent plugins/modules
@@ -480,15 +491,17 @@ do
   -- Simple and easy statusline.
   --  You could remove this setup call if you don't like it,
   --  and try some other statusline plugin
-  local statusline = require 'mini.statusline'
+  -- local statusline = require 'mini.statusline'
   -- Set `use_icons` to true if you have a Nerd Font
-  statusline.setup { use_icons = vim.g.have_nerd_font }
+  -- statusline.setup {
+  --   use_icons = vim.g.have_nerd_font,
+  -- }
 
   -- You can configure sections in the statusline by overriding their
   -- default behavior. For example, here we set the section for
   -- cursor location to LINE:COLUMN
   ---@diagnostic disable-next-line: duplicate-set-field
-  statusline.section_location = function() return '%2l:%-2v' end
+  -- statusline.section_location = function() return '%2l:%-2v' end
 
   -- ... and there is more!
   --  Check out: https://github.com/nvim-mini/mini.nvim
@@ -947,7 +960,7 @@ do
     appearance = {
       -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
       -- Adjusts spacing to ensure icons are aligned
-      nerd_font_variant = 'mono',
+      nerd_font_variant = 'normal',
     },
 
     completion = {
@@ -1065,6 +1078,7 @@ do
   require 'kickstart.plugins.lint'
   -- require 'kickstart.plugins.autopairs'
   -- require 'kickstart.plugins.neo-tree'
+
   vim.pack.add { gh 'stevearc/oil.nvim' }
   require('oil').setup {
     -- See :help oil-columns
@@ -1080,6 +1094,22 @@ do
     },
   }
   vim.keymap.set('n', '-', '<cmd>Oil<CR>', { desc = 'Open parent directory' })
+
+  vim.pack.add { gh 'nvim-lualine/lualine.nvim' }
+  require('lualine').setup {
+    options = {
+      theme = 'iceberg_dark',
+      globalstatus = true,
+    },
+    sections = {
+      lualine_a = { 'mode' },
+      lualine_b = { 'branch', 'diff', 'diagnostics' },
+      lualine_c = { 'filename' },
+      lualine_x = { 'encoding', 'filetype' },
+      lualine_y = { 'progress' },
+      lualine_z = { 'location' },
+    },
+  }
 
   -- NOTE: You can add your own plugins, configuration, etc. in `lua/custom/plugins/*.lua`.
   --
