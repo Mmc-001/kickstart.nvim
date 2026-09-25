@@ -821,6 +821,31 @@ do
         Lua = { format = { enable = false } },
       },
     },
+
+    -- LaTeX
+    texlab = {
+      settings = {
+        texlab = {
+          build = {
+            executable = 'latexmk',
+            args = {
+              '-pdf',
+              '-interaction=nonstopmode',
+              '-synctex=1',
+              '%f',
+            },
+            onSave = false,
+          },
+
+          chktex = {
+            onOpenAndSave = true,
+            onEdit = false,
+          },
+
+          diagnosticsDelay = 300,
+        },
+      },
+    },
   }
 
   vim.pack.add {
@@ -862,6 +887,10 @@ do
 
     -- Lua
     'stylua',
+
+    -- LaTeX
+    'latexindent',
+    'ltex-ls-plus',
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -905,12 +934,18 @@ do
     },
     -- You can also specify external formatters in here.
     formatters_by_ft = {
+      -- Python
       python = { 'ruff_format' },
 
+      -- C/CPP
       c = { 'clang_format' },
       cpp = { 'clang_format' },
 
+      -- Lua
       lua = { 'stylua' },
+
+      -- LaTeX
+      tex = { 'latexindent' },
     },
   }
 
@@ -1019,6 +1054,7 @@ do
   -- Ensure basic parsers are installed
   local parsers = {
     'bash',
+    'bibtex',
     'c',
     'cmake',
     'cpp',
@@ -1026,6 +1062,7 @@ do
     'dockerfile',
     'html',
     'json',
+    'latex',
     'lua',
     'luadoc',
     'markdown',
@@ -1154,6 +1191,31 @@ do
   -- require 'custom.plugins.colorscheme'
   -- require 'custom.plugins.ui'
   -- require 'custom.plugins.git'
+end
+
+-- ============================================================
+-- SECTION 11: LATEX
+-- VimTeX editing / compilation / SyncTeX
+-- ============================================================
+do
+  vim.pack.add {
+    gh 'lervag/vimtex',
+  }
+
+  vim.g.vimtex_view_method = 'skim'
+
+  vim.g.vimtex_compiler_method = 'latexmk'
+
+  vim.g.vimtex_compiler_latexmk = {
+    options = {
+      '-pdf',
+      '-interaction=nonstopmode',
+      '-synctex=1',
+      '-file-line-error',
+    },
+  }
+
+  vim.g.vimtex_quickfix_mode = 0
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
