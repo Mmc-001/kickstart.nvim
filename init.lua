@@ -194,7 +194,7 @@ do
     underline = { severity = { min = vim.diagnostic.severity.WARN } },
 
     -- Can switch between these as you prefer
-    virtual_text =  true, -- Text shows up at the end of the line
+    virtual_text = true, -- Text shows up at the end of the line
     virtual_lines = false, -- Text shows up underneath the line, with virtual lines
 
     -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
@@ -440,10 +440,9 @@ do
   -- Load the colorscheme here.
   -- Like many other themes, this one has different styles, and you could load
   -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  -- vim.cmd.colorscheme 'tokyonight'
-  vim.cmd.colorscheme 'default' -- Default colorscheme, no extra plugin needed
+  vim.cmd.colorscheme 'tokyonight'
+  -- vim.cmd.colorscheme 'default' -- Default colorscheme, no extra plugin needed
   -- vim.cmd.colorscheme 'vscode' -- VS Code colorscheme
-
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
@@ -485,8 +484,8 @@ do
   require('mini.surround').setup()
 
   -- Commenting
-  require('mini.comment').setup()   -- gcc / gc — commenting, zero extra dependency
-  require('mini.pairs').setup()     -- autopairs, replaces kickstart.plugins.autopairs entirely
+  require('mini.comment').setup() -- gcc / gc — commenting, zero extra dependency
+  require('mini.pairs').setup() -- autopairs, replaces kickstart.plugins.autopairs entirely
 
   -- Simple and easy statusline.
   --  You could remove this setup call if you don't like it,
@@ -646,6 +645,17 @@ end
 -- SECTION 6: LSP
 -- LSP keymaps, server configuration, Mason tools installations
 -- ============================================================
+
+_G.get_python_path = function()
+  if vim.env.VIRTUAL_ENV then
+    return vim.env.VIRTUAL_ENV .. '/bin/python'
+  elseif vim.env.CONDA_PREFIX then
+    return vim.env.CONDA_PREFIX .. '/bin/python'
+  end
+
+  return vim.fn.exepath 'python3' or vim.fn.exepath 'python' or 'python'
+end
+
 do
   -- [[ LSP Configuration ]]
   -- Brief aside: **What is LSP?**
@@ -745,41 +755,55 @@ do
     end,
   })
 
-  local function get_python_path()
-    if vim.env.VIRTUAL_ENV then
-      return vim.env.VIRTUAL_ENV .. '/bin/python'
-    elseif vim.env.CONDA_PREFIX then
-      return vim.env.CONDA_PREFIX .. '/bin/python'
-    end
-    return vim.fn.exepath 'python3' or vim.fn.exepath 'python' or 'python'
-  end
+  -- local function get_python_path()
+  --   if vim.env.VIRTUAL_ENV then
+  --     return vim.env.VIRTUAL_ENV .. '/bin/python'
+  --   elseif vim.env.CONDA_PREFIX then
+  --     return vim.env.CONDA_PREFIX .. '/bin/python'
+  --   end
+  --   return vim.fn.exepath 'python3' or vim.fn.exepath 'python' or 'python'
+  -- end
 
   -- Enable the following language servers
   --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
   --  See `:help lsp-config` for information about keys and how to configure
   ---@type table<string, vim.lsp.Config>
   local servers = {
+    -- C/C++
     clangd = {},
-    -- gopls = {},
-    -- pyright = {},
-    -- tsc = {},
+
+    -- Python
     basedpyright = {
       settings = {
         basedpyright = {
-          analysis = { autoSearchPaths = true, diagnosticMode = 'openFilesOnly' },
+          analysis = {
+            autoSearchPaths = true,
+            diagnosticMode = 'openFilesOnly',
+            typeCheckingMode = 'standard',
+          },
         },
-        python = { pythonPath = get_python_path() },
+        python = {
+          pythonPath = get_python_path(),
+        },
       },
     },
-    -- Some languages (like rust) have entire language plugins that can be useful:
-    --    https://github.com/mrcjkb/rustaceanvim
-    --
-    -- But for many setups, the LSP (`rust_analyzer`) will work just fine
-    -- rust_analyzer = {},
 
-    stylua = {}, -- Used to format Lua code
+    -- Dockerfiles, compose.yaml, docker-bake.hcl, etc.
+    docker_language_server = {},
+
+    -- YAML
+    yamlls = {
+      settings = {
+        yaml = {
+          validate = true,
+          hover = true,
+          completion = true,
+        },
+      },
+    },
 
     -- Special Lua Config, as recommended by neovim help docs
+    stylua = {}, -- Used to format Lua code
     lua_ls = {
       on_init = function(client)
         client.server_capabilities.documentFormattingProvider = false
@@ -790,43 +814,13 @@ do
         local current_settings = client.config.settings --[[@as lspconfig.settings.lua_ls]]
         client.config.settings.Lua = vim.tbl_deep_extend('force', current_settings.Lua, {
           runtime = { version = 'LuaJIT' },
-          workspace = { checkThirdParty = false },  -- library removed; lazydev handles this now
+          workspace = { checkThirdParty = false }, -- library removed; lazydev handles this now
         })
       end,
       settings = {
         Lua = { format = { enable = false } },
       },
     },
-    -- lua_ls = {
-    --   on_init = function(client)
-    --     client.server_capabilities.documentFormattingProvider = false -- Disable formatting (formatting is done by stylua)
-    --
-    --     if client.workspace_folders then
-    --       local path = client.workspace_folders[1].name
-    --       if path ~= vim.fn.stdpath 'config' and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc')) then return end
-    --     end
-    --
-    --     local current_settings = client.config.settings --[[@as lspconfig.settings.lua_ls]]
-    --     client.config.settings.Lua = vim.tbl_deep_extend('force', current_settings.Lua, {
-    --       runtime = {
-    --         version = 'LuaJIT',
-    --         path = { 'lua/?.lua', 'lua/?/init.lua' },
-    --       },
-    --       workspace = {
-    --         checkThirdParty = false,
-    --         -- NOTE: this is a lot slower and will cause issues when working on your own configuration.
-    --         --  See https://github.com/neovim/nvim-lspconfig/issues/3189
-    --         library = vim.api.nvim_get_runtime_file('', true),
-    --       },
-    --     })
-    --   end,
-    --   ---@type lspconfig.settings.lua_ls
-    --   settings = {
-    --     Lua = {
-    --       format = { enable = false }, -- Disable formatting (formatting is done by stylua)
-    --     },
-    -- },
-    -- },
   }
 
   vim.pack.add {
@@ -854,6 +848,20 @@ do
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
     -- You can add other tools here that you want Mason to install
+    -- Python
+    'ruff',
+
+    -- C / C++
+    'clang-format',
+
+    -- Docker
+    'hadolint',
+
+    -- YAML / Docker Compose
+    'yamllint',
+
+    -- Lua
+    'stylua',
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -881,8 +889,10 @@ do
     format_on_save = function(bufnr)
       -- You can specify filetypes to autoformat on save here:
       local enabled_filetypes = {
-        -- lua = true,
-        -- python = true,
+        python = true,
+        c = true,
+        cpp = true,
+        lua = true,
       }
       if enabled_filetypes[vim.bo[bufnr].filetype] then
         return { timeout_ms = 500 }
@@ -895,12 +905,12 @@ do
     },
     -- You can also specify external formatters in here.
     formatters_by_ft = {
-      -- rust = { 'rustfmt' },
-      -- Conform can also run multiple formatters sequentially
-      -- python = { "isort", "black" },
-      --
-      -- You can use 'stop_after_first' to run the first available formatter from the list
-      -- javascript = { "prettierd", "prettier", stop_after_first = true },
+      python = { 'ruff_format' },
+
+      c = { 'clang_format' },
+      cpp = { 'clang_format' },
+
+      lua = { 'stylua' },
     },
   }
 
@@ -1007,7 +1017,25 @@ do
   vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
   -- Ensure basic parsers are installed
-  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'python', 'query', 'vim', 'vimdoc' }
+  local parsers = {
+    'bash',
+    'c',
+    'cmake',
+    'cpp',
+    'diff',
+    'dockerfile',
+    'html',
+    'json',
+    'lua',
+    'luadoc',
+    'markdown',
+    'markdown_inline',
+    'python',
+    'query',
+    'vim',
+    'vimdoc',
+    'yaml',
+  }
   require('nvim-treesitter').install(parsers)
 
   ---@param buf integer
@@ -1079,26 +1107,28 @@ do
   -- require 'kickstart.plugins.autopairs'
   -- require 'kickstart.plugins.neo-tree'
 
+  -- Oil setup
   vim.pack.add { gh 'stevearc/oil.nvim' }
   require('oil').setup {
     -- See :help oil-columns
     columns = {
-      "icon",
+      'icon',
       -- "permissions",
-      "size",
-      "mtime",
-  },
+      'size',
+      'mtime',
+    },
     view_options = {
       show_hidden = true,
-      natural_order = "fast",
+      natural_order = 'fast',
     },
   }
   vim.keymap.set('n', '-', '<cmd>Oil<CR>', { desc = 'Open parent directory' })
 
+  -- Lualine setup
   vim.pack.add { gh 'nvim-lualine/lualine.nvim' }
   require('lualine').setup {
     options = {
-      theme = 'iceberg_dark',
+      -- theme = 'iceberg_dark',
       globalstatus = true,
     },
     sections = {
