@@ -437,12 +437,15 @@ do
     italic_comments = false,
   }
 
+  vim.pack.add { gh 'bluz71/vim-nightfly-colors' }
+
   -- Load the colorscheme here.
   -- Like many other themes, this one has different styles, and you could load
   -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  vim.cmd.colorscheme 'tokyonight'
+  -- vim.cmd.colorscheme 'tokyonight-night'
   -- vim.cmd.colorscheme 'default' -- Default colorscheme, no extra plugin needed
   -- vim.cmd.colorscheme 'vscode' -- VS Code colorscheme
+  vim.cmd.colorscheme 'nightfly'
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
