@@ -324,6 +324,7 @@ end
 ---@param repo string
 ---@return string
 local function gh(repo) return 'https://github.com/' .. repo end
+-- local function cb(repo) return 'https://codeberg.org/' .. repo end
 
 -- ============================================================
 -- SECTION 4: UI / CORE UX PLUGINS
@@ -424,7 +425,7 @@ do
   --
   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
   vim.pack.add { gh 'folke/tokyonight.nvim' }
-  -- ---@diagnostic disable-next-line: missing-fields
+  ---@diagnostic disable-next-line: missing-fields
   require('tokyonight').setup {
     styles = {
       comments = { italic = false }, -- Disable italics in comments
@@ -1168,14 +1169,14 @@ do
   vim.pack.add { gh 'nvim-lualine/lualine.nvim' }
   require('lualine').setup {
     options = {
-      -- theme = 'iceberg_dark',
+      -- theme = 'ayu',
       globalstatus = true,
     },
     sections = {
       lualine_a = { 'mode' },
       lualine_b = { 'branch', 'diff', 'diagnostics' },
       lualine_c = { 'filename' },
-      lualine_x = { 'encoding', 'filetype' },
+      lualine_x = { 'filetype' },
       lualine_y = { 'progress' },
       lualine_z = { 'location' },
     },
