@@ -1168,6 +1168,7 @@ do
       show_hidden = true,
       natural_order = 'fast',
     },
+    delete_to_trash = true,
   }
   vim.keymap.set('n', '-', '<cmd>Oil<CR>', { desc = 'Open parent directory' })
 
