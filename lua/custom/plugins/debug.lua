@@ -5,13 +5,13 @@
 -- Primarily focused on configuring the debugger for Go, but can
 -- be extended to other languages as well. That's why it's called
 -- kickstart.nvim and not kitchen-sink.nvim ;)
-
+local util = require 'custom.util'
 vim.pack.add {
-  'https://github.com/mfussenegger/nvim-dap',
-  'https://github.com/rcarriga/nvim-dap-ui',
-  'https://github.com/nvim-neotest/nvim-nio',
-  'https://github.com/mason-org/mason.nvim',
-  'https://github.com/jay-babu/mason-nvim-dap.nvim',
+  util.gh '/mfussenegger/nvim-dap',
+  util.gh 'rcarriga/nvim-dap-ui',
+  util.gh 'nvim-neotest/nvim-nio',
+  util.gh 'mason-org/mason.nvim',
+  util.gh 'jay-babu/mason-nvim-dap.nvim',
 }
 
 -- Basic debugging keymaps, feel free to change to your liking!
@@ -38,7 +38,7 @@ dap.configurations.python = {
     request = 'launch',
     name = 'Launch file',
     program = '${file}',
-    python = get_python_path(),
+    python = util.get_python_path(),
     console = 'integratedTerminal',
   },
 }
