@@ -64,10 +64,23 @@ do
     },
 
     sources = {
-      default = { 'lsp', 'path', 'snippets' },
-      per_filetype = { lua = { 'lazydev', 'lsp', 'path', 'snippets' } },
+      default = {
+        'lsp',
+        'path',
+        'snippets',
+      },
+      per_filetype = { lua = {
+        'lazydev',
+        'lsp',
+        'path',
+        'snippets',
+      } },
       providers = {
-        lazydev = { name = 'LazyDev', module = 'lazydev.integrations.blink', score_offset = 100 },
+        lazydev = {
+          name = 'LazyDev',
+          module = 'lazydev.integrations.blink',
+          score_offset = 100,
+        },
       },
     },
 
