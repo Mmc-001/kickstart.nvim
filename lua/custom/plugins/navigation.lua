@@ -152,4 +152,9 @@ do
     delete_to_trash = true,
   }
   vim.keymap.set('n', '-', '<cmd>Oil<CR>', { desc = 'Open parent directory' })
+
+  -- Mini bufremove
+  require('mini.bufremove').setup()
+
+  vim.keymap.set('n', '<leader>rb', function() MiniBufremove.delete(0) end, { desc = '[R]emove [B]uffer' })
 end
