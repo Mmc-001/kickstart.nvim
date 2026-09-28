@@ -53,4 +53,8 @@ do
   -- See `:help ibl`
   vim.pack.add { gh 'lukas-reineke/indent-blankline.nvim' }
   require('ibl').setup {}
+  -- Mini trailspace
+  require('mini.trailspace').setup()
+
+  vim.keymap.set('n', '<leader>wt', MiniTrailspace.trim, { desc = 'Trailing [W]hitespace [T]rim' })
 end
