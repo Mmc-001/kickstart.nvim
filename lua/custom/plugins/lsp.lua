@@ -141,7 +141,7 @@ do
     },
 
     -- Special Lua Config, as recommended by neovim help docs
-    stylua = {}, -- Used to format Lua code
+    -- stylua = {}, -- Used to format Lua code
     lua_ls = {
       on_init = function(client)
         client.server_capabilities.documentFormattingProvider = false
