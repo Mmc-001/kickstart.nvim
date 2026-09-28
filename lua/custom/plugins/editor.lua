@@ -43,16 +43,24 @@ do
   -- - sr)'  - [S]urround [R]eplace [)] [']
   require('mini.surround').setup()
 
+  -- Operator-based text editing
+  require('mini.operators').setup()
+  require('mini.splitjoin').setup()
+
   -- Commenting
   require('mini.comment').setup() -- gcc / gc — commenting, zero extra dependency
+
   require('mini.pairs').setup() -- autopairs, replaces kickstart.plugins.autopairs entirely
 
-  -- Add indentation guides even on blank lines
+  -- Movement with labels
+  require('mini.jump2d').setup()
 
+  -- Add indentation guides even on blank lines
   -- Enable `lukas-reineke/indent-blankline.nvim`
   -- See `:help ibl`
   vim.pack.add { gh 'lukas-reineke/indent-blankline.nvim' }
   require('ibl').setup {}
+
   -- Mini trailspace
   require('mini.trailspace').setup()
 
