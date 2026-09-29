@@ -1,5 +1,5 @@
 -- ============================================================
--- SECTION 7: FORMATTING
+-- FORMATTING
 -- conform.nvim setup and keymap
 -- ============================================================
 
@@ -17,6 +17,9 @@ do
         c = true,
         cpp = true,
         lua = true,
+        dockerfile = true,
+        yaml = true,
+        tex = true,
       }
       if enabled_filetypes[vim.bo[bufnr].filetype] then
         return { timeout_ms = 500 }
