@@ -1,6 +1,7 @@
 -- Linting
+local gh = require('custom.util').gh
 
-vim.pack.add { 'https://github.com/mfussenegger/nvim-lint' }
+vim.pack.add { gh 'mfussenegger/nvim-lint' }
 
 local lint = require 'lint'
 lint.linters_by_ft = {
