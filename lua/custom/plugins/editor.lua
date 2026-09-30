@@ -64,5 +64,22 @@ do
   -- Mini trailspace
   require('mini.trailspace').setup()
 
+  -- CSV View plugin
+  vim.pack.add { gh 'hat0uma/csvview.nvim' }
+  require('csvview').setup {
+    view = {
+      display_mode = 'border',
+    },
+    keymaps = {
+      -- Horizontal navigation
+      jump_next_field_end = { '<Tab>', mode = { 'n', 'v' } },
+      jump_prev_field_end = { '<S-Tab>', mode = { 'n', 'v' } },
+
+      -- Vertical navigation
+      jump_next_row = { '<Enter>', mode = { 'n', 'v' } },
+      jump_prev_row = { '<S-Enter>', mode = { 'n', 'v' } },
+    },
+  }
+
   vim.keymap.set('n', '<leader>wt', MiniTrailspace.trim, { desc = 'Trailing [W]hitespace [T]rim' })
 end
