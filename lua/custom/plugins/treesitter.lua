@@ -32,6 +32,7 @@ do
     'markdown_inline',
     'python',
     'query',
+    'regex',
     'vim',
     'vimdoc',
     'yaml',
