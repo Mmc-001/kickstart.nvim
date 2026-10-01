@@ -1,3 +1,4 @@
+-- TODO: comment for clarity and decoration
 vim.loader.enable()
 
 local modules = {
