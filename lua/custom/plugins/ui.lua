@@ -92,4 +92,8 @@ do
       lualine_z = { 'location' },
     },
   }
+
+  -- Starter screen
+  -- vim.pack.add { gh 'goolord/alpha-nvim' }
+  -- require('alpha').setup(require('alpha.themes.dashboard').config)
 end
