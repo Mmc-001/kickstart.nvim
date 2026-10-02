@@ -7,7 +7,7 @@
 -- kickstart.nvim and not kitchen-sink.nvim ;)
 local util = require 'custom.util'
 vim.pack.add {
-  util.gh '/mfussenegger/nvim-dap',
+  util.gh 'mfussenegger/nvim-dap',
   util.gh 'rcarriga/nvim-dap-ui',
   util.gh 'nvim-neotest/nvim-nio',
   util.gh 'mason-org/mason.nvim',
