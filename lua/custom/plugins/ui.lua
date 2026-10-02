@@ -65,10 +65,17 @@ do
     },
   }
 
+  vim.pack.add { gh 'craftzdog/solarized-osaka.nvim' }
+  require('solarized-osaka').setup {
+    style = 'vivid',
+    lualine_bold = true,
+  }
+
   -- Load the colorscheme here.
   -- Like many other themes, this one has different styles, and you could load
   -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  vim.cmd.colorscheme 'tokyonight-night'
+  -- vim.cmd.colorscheme 'tokyonight-night'
+  vim.cmd.colorscheme 'solarized-osaka'
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
@@ -80,20 +87,16 @@ do
   vim.pack.add { gh 'nvim-lualine/lualine.nvim' }
   require('lualine').setup {
     options = {
-      -- theme = 'ayu',
+      -- theme = 'powerline',
       globalstatus = true,
     },
     sections = {
       lualine_a = { 'mode' },
-      lualine_b = { 'branch', 'diff', 'diagnostics' },
-      lualine_c = { 'filename' },
+      lualine_b = { 'branch', 'diff' },
+      lualine_c = { 'filename', 'diagnostics' },
       lualine_x = { 'filetype' },
       lualine_y = { 'progress' },
       lualine_z = { 'location' },
     },
   }
-
-  -- Starter screen
-  -- vim.pack.add { gh 'goolord/alpha-nvim' }
-  -- require('alpha').setup(require('alpha.themes.dashboard').config)
 end
