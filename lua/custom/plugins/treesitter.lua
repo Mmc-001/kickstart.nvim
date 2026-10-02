@@ -25,7 +25,7 @@ do
     'dockerfile',
     'html',
     'json',
-    'latex',
+    -- 'latex',
     'lua',
     'luadoc',
     'markdown',
@@ -68,6 +68,8 @@ do
   vim.api.nvim_create_autocmd('FileType', {
     callback = function(args)
       local buf, filetype = args.buf, args.match
+
+      if filetype == 'tex' or filetype == 'plaintex' then return end
 
       local language = vim.treesitter.language.get_lang(filetype)
       if not language then return end

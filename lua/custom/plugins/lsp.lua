@@ -165,13 +165,6 @@ do
       settings = {
         texlab = {
           build = {
-            executable = 'latexmk',
-            args = {
-              '-pdf',
-              '-interaction=nonstopmode',
-              '-synctex=1',
-              '%f',
-            },
             onSave = false,
           },
 
@@ -211,6 +204,10 @@ do
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
     -- You can add other tools here that you want Mason to install
+
+    -- Markdown
+    'markdownlint',
+
     -- Python
     'ruff',
 
@@ -223,11 +220,14 @@ do
     -- YAML / Docker Compose
     'yamllint',
 
+    -- JSON
+    'jsonls',
+
     -- Lua
     'stylua',
 
     -- LaTeX
-    'latexindent',
+    'texlab',
     'ltex-ls-plus',
   })
 
