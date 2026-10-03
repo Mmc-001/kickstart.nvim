@@ -69,8 +69,11 @@ do
       --
       -- When you move your cursor, the highlights will be cleared (the second autocommand).
       local client = vim.lsp.get_client_by_id(event.data.client_id)
+      if client and client.name == 'ltex_plus' then
+        vim.diagnostic.config({ underline = true, virtual_text = false }, vim.lsp.diagnostic.get_namespace(client.id))
+      end
       if client and client:supports_method('textDocument/documentHighlight', event.buf) then
-        local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
+        local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight' .. event.buf, { clear = false })
         vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
           buffer = event.buf,
           group = highlight_augroup,
@@ -84,7 +87,7 @@ do
         })
 
         vim.api.nvim_create_autocmd('LspDetach', {
-          group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
+          group = vim.api.nvim_create_augroup('kickstart-lsp-detach' .. event.buf, { clear = true }),
           callback = function(event2)
             vim.lsp.buf.clear_references()
             vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
@@ -108,22 +111,25 @@ do
   ---@type table<string, vim.lsp.Config>
   local servers = {
     -- C/C++
-    clangd = {},
+    clangd = { cmd = { 'clangd', '--background-index', '--clang-tidy', '--header-insertion=iwyu', '--completion-style=detailed' } },
 
     -- Python
     basedpyright = {
       settings = {
         basedpyright = {
+          disableOrganizeImports = true,
+          disableTaggedHints = true,
           analysis = {
             autoSearchPaths = true,
             diagnosticMode = 'openFilesOnly',
             typeCheckingMode = 'standard',
           },
         },
-        python = {
-          pythonPath = util.get_python_path(),
-        },
       },
+      before_init = function(_, config) config.settings.python = { pythonPath = util.get_python_path(config.root_dir) } end,
+    },
+    ruff = {
+      on_attach = function(client) client.server_capabilities.hoverProvider = false end, -- basedpyright owns hover
     },
 
     -- Dockerfiles, compose.yaml, docker-bake.hcl, etc.
@@ -131,6 +137,7 @@ do
 
     -- YAML
     yamlls = {
+      filetypes = { 'yaml', 'yaml.gitlab', 'yaml.helm-values' },
       settings = {
         yaml = {
           validate = true,
@@ -139,6 +146,9 @@ do
         },
       },
     },
+
+    -- JSON
+    jsonls = {},
 
     -- Special Lua Config, as recommended by neovim help docs
     -- stylua = {}, -- Used to format Lua code
@@ -155,27 +165,7 @@ do
           workspace = { checkThirdParty = false }, -- library removed; lazydev handles this now
         })
       end,
-      settings = {
-        Lua = { format = { enable = false } },
-      },
-    },
-
-    -- LaTeX
-    texlab = {
-      settings = {
-        texlab = {
-          build = {
-            onSave = false,
-          },
-
-          chktex = {
-            onOpenAndSave = true,
-            onEdit = false,
-          },
-
-          diagnosticsDelay = 300,
-        },
-      },
+      settings = {},
     },
   }
 
@@ -219,9 +209,6 @@ do
 
     -- YAML / Docker Compose
     'yamllint',
-
-    -- JSON
-    'jsonls',
 
     -- Lua
     'stylua',
