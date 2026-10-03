@@ -89,3 +89,17 @@ do
   -- See `:help 'confirm'`
   vim.o.confirm = true
 end
+
+-- Docker Compose files: route to docker_language_server (yamlls excludes this filetype)
+vim.filetype.add {
+  filename = {
+    ['compose.yaml'] = 'yaml.docker-compose',
+    ['compose.yml'] = 'yaml.docker-compose',
+    ['docker-compose.yaml'] = 'yaml.docker-compose',
+    ['docker-compose.yml'] = 'yaml.docker-compose',
+  },
+  pattern = {
+    ['compose%..+%.ya?ml'] = 'yaml.docker-compose',
+    ['docker%-compose%..+%.ya?ml'] = 'yaml.docker-compose',
+  },
+}
