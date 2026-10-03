@@ -14,11 +14,20 @@ local modules = {
   'custom.plugins.completion',
   'custom.plugins.treesitter',
   'custom.plugins.lint',
-  'custom.plugins.debug',
   'custom.plugins.latex',
 }
-
-for _, m in ipairs(modules) do
-  local ok, err = pcall(require, m)
+local function load(m)
+  local ok, err = xpcall(require, debug.traceback, m)
   if not ok then vim.notify(('Failed to load %s:\n%s'):format(m, err), vim.log.levels.ERROR) end
 end
+
+for _, m in ipairs(modules) do
+  load(m)
+end
+
+vim.api.nvim_create_autocmd('UIEnter', {
+  once = true,
+  callback = function()
+    vim.schedule(function() load 'custom.plugins.debug' end)
+  end,
+})
