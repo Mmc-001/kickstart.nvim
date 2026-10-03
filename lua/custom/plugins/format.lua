@@ -9,23 +9,11 @@ do
   -- [[ Formatting ]]
   vim.pack.add { gh 'stevearc/conform.nvim' }
   require('conform').setup {
-    notify_on_error = false,
+    notify_on_error = true,
     format_on_save = function(bufnr)
-      -- You can specify filetypes to autoformat on save here:
-      local enabled_filetypes = {
-        python = true,
-        c = true,
-        cpp = true,
-        lua = true,
-        dockerfile = true,
-        yaml = true,
-        tex = true,
-      }
-      if enabled_filetypes[vim.bo[bufnr].filetype] then
-        return { timeout_ms = 500 }
-      else
-        return nil
-      end
+      local timeouts = { python = 500, c = 500, cpp = 500, lua = 500, dockerfile = 500, yaml = 500, tex = 3000 }
+      local t = timeouts[vim.bo[bufnr].filetype]
+      if t then return { timeout_ms = t } end
     end,
     default_format_opts = {
       lsp_format = 'fallback', -- Use external formatters if configured below, otherwise use LSP formatting. Set to `false` to disable LSP formatting entirely.
@@ -33,7 +21,7 @@ do
     -- You can also specify external formatters in here.
     formatters_by_ft = {
       -- Python
-      python = { 'ruff_format' },
+      python = { 'ruff_organize_imports', 'ruff_format' },
 
       -- C/CPP
       c = { 'clang_format' },
@@ -44,6 +32,9 @@ do
 
       -- LaTeX
       tex = { 'latexindent' },
+
+      -- YAML
+      yaml = { 'yamlfmt' },
     },
   }
 
