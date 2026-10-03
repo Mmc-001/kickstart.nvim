@@ -4,6 +4,7 @@
 -- ============================================================
 
 local gh = require('custom.util').gh
+vim.pack.add { gh 'nvim-mini/mini.nvim' }
 
 do
   -- [[ Fuzzy Finder (files, lsp, etc) ]]
@@ -51,7 +52,7 @@ do
     --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
     --   },
     -- },
-    -- pickers = {}
+    pickers = { find_files = { hidden = true, file_ignore_patterns = { '^%.git/' } } },
     extensions = {
       ['ui-select'] = { require('telescope.themes').get_dropdown() },
     },
@@ -62,7 +63,11 @@ do
   pcall(require('telescope').load_extension, 'ui-select')
 
   -- See `:help telescope.builtin`
-  local builtin = require 'telescope.builtin'
+  local builtin = setmetatable({}, {
+    __index = function(_, name)
+      return function(...) return require('telescope.builtin')[name](...) end
+    end,
+  })
   vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
   vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
   vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
