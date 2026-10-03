@@ -13,6 +13,7 @@ do
 
   -- NOTE: You can also specify a branch or a specific commit
   vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
+  if vim.fn.executable 'tree-sitter' == 0 then vim.notify('nvim-treesitter: tree-sitter-cli not found; parser installs will fail', vim.log.levels.WARN) end
 
   -- Ensure basic parsers are installed
   local parsers = {
@@ -36,6 +37,14 @@ do
     'vim',
     'vimdoc',
     'yaml',
+    'toml',
+    'make',
+    'gitcommit',
+    'gitignore',
+    'git_config',
+    'ini',
+    'xml',
+    'doxygen',
   }
   require('nvim-treesitter').install(parsers)
 
