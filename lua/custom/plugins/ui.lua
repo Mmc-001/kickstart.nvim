@@ -17,6 +17,8 @@ do
       { '<leader>t', group = '[T]oggle' },
       { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
       { 'gr', group = 'LSP Actions', mode = { 'n' } },
+      { '<leader>w', group = '[W]hitespace' },
+      { '<leader>r', group = '[R]emove' },
     },
   }
 
@@ -38,18 +40,19 @@ do
         ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
         ['vim.lsp.util.stylize_markdown'] = true,
       },
+      signature = { enabled = false },
+      progress = { enabled = false },
     },
     -- you can enable a preset for easier configuration
     presets = {
       -- you can enable a preset by setting it to true, or a table that will override the preset config
       -- you can also add custom presets that you can enable/disable with enabled=true
       bottom_search = false, -- use a classic bottom cmdline for search
-      command_palette = false, -- position the cmdline and popupmenu together
+      command_palette = true, -- position the cmdline and popupmenu together
       long_message_to_split = false, -- long messages will be sent to a split
       lsp_doc_border = true, -- add a border to hover docs and signature help
     },
   }
-  vim.notify = require 'notify'
 
   -- [[ Colorscheme ]]
   -- You can easily change to a different colorscheme.
@@ -57,13 +60,6 @@ do
   -- change the command under that to load whatever the name of that colorscheme is.
   --
   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-  vim.pack.add { gh 'folke/tokyonight.nvim' }
-  ---@diagnostic disable-next-line: missing-fields
-  require('tokyonight').setup {
-    styles = {
-      comments = { italic = false }, -- Disable italics in comments
-    },
-  }
 
   vim.pack.add { gh 'craftzdog/solarized-osaka.nvim' }
   require('solarized-osaka').setup {
@@ -74,7 +70,6 @@ do
   -- Load the colorscheme here.
   -- Like many other themes, this one has different styles, and you could load
   -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  -- vim.cmd.colorscheme 'tokyonight-night'
   vim.cmd.colorscheme 'solarized-osaka'
 
   -- Highlight todo, notes, etc in comments
