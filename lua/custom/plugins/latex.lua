@@ -10,7 +10,9 @@ vim.pack.add {
 }
 
 -- VimTeX: compilation, PDF viewing, inverse search, etc.
-vim.g.vimtex_view_method = 'skim'
+vim.g.vimtex_view_method = vim.fn.has 'mac' == 1 and 'skim' or 'zathura'
+vim.g.vimtex_view_skim_sync = 1
+vim.g.vimtex_view_skim_activate = 1
 vim.g.vimtex_compiler_method = 'latexmk'
 
 vim.g.vimtex_compiler_latexmk = {
@@ -52,13 +54,11 @@ vim.lsp.config('texlab', {
           '-n42',
         },
       },
-
-      formatterLineLength = 80,
     },
   },
 })
 
--- LTeX+: grammar/spelling diagnostics for LaTeX and Markdown.
+-- LTeX+: grammar/spelling diagnostics for LaTeX.
 vim.lsp.config('ltex_plus', {
   filetypes = { 'tex', 'plaintex' },
 
@@ -67,6 +67,10 @@ vim.lsp.config('ltex_plus', {
       language = 'en-US',
       diagnosticSeverity = 'information',
       checkFrequency = 'save',
+      dictionary = {
+        ['en-US'] = { --[[ project jargon ]]
+        },
+      },
     },
   },
 })
