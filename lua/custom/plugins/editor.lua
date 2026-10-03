@@ -30,8 +30,8 @@ do
   require('mini.ai').setup {
     -- NOTE: Avoid conflicts with the built-in incremental selection mappings on Neovim>=0.12 (see `:help treesitter-incremental-selection`)
     mappings = {
-      around_next = 'aa',
-      inside_next = 'ii',
+      around_next = 'aN',
+      inside_next = 'iN',
     },
     n_lines = 500,
   }
@@ -44,7 +44,7 @@ do
   require('mini.surround').setup()
 
   -- Operator-based text editing
-  require('mini.operators').setup()
+  require('mini.operators').setup { exchange = { prefix = 'gX' }, replace = { prefix = 'g/' } }
   require('mini.splitjoin').setup()
 
   -- Commenting
@@ -66,20 +66,26 @@ do
 
   -- CSV View plugin
   vim.pack.add { gh 'hat0uma/csvview.nvim' }
-  require('csvview').setup {
-    view = {
-      display_mode = 'border',
-    },
-    keymaps = {
-      -- Horizontal navigation
-      jump_next_field_end = { '<Tab>', mode = { 'n', 'v' } },
-      jump_prev_field_end = { '<S-Tab>', mode = { 'n', 'v' } },
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = { 'csv', 'tsv' },
+    once = true,
+    callback = function()
+      require('csvview').setup {
+        view = {
+          display_mode = 'border',
+        },
+        keymaps = {
+          -- Horizontal navigation
+          jump_next_field_end = { '<Tab>', mode = { 'n', 'v' } },
+          jump_prev_field_end = { '<S-Tab>', mode = { 'n', 'v' } },
 
-      -- Vertical navigation
-      jump_next_row = { '<Enter>', mode = { 'n', 'v' } },
-      jump_prev_row = { '<S-Enter>', mode = { 'n', 'v' } },
-    },
-  }
+          -- Vertical navigation
+          jump_next_row = { '<Enter>', mode = { 'n', 'v' } },
+          jump_prev_row = { '<S-Enter>', mode = { 'n', 'v' } },
+        },
+      }
+    end,
+  })
 
   vim.keymap.set('n', '<leader>wt', MiniTrailspace.trim, { desc = 'Trailing [W]hitespace [T]rim' })
 end
