@@ -4,7 +4,7 @@
 --
 -- Primarily focused on configuring the debugger for Go, but can
 -- be extended to other languages as well. That's why it's called
--- kickstart.nvim and not kitchen-sink.nvim ;)
+-- kickstart.nvim and not kitchen-sink.nvim ;) -- TODO: rewrite
 local util = require 'custom.util'
 vim.pack.add {
   util.gh 'mfussenegger/nvim-dap',
@@ -38,7 +38,7 @@ dap.configurations.python = {
     request = 'launch',
     name = 'Launch file',
     program = '${file}',
-    python = util.get_python_path(),
+    python = function() return util.get_python_path(vim.fn.getcwd()) end,
     console = 'integratedTerminal',
   },
 }
@@ -56,6 +56,7 @@ dap.configurations.cpp = {
     request = 'launch',
     program = function() return vim.fn.input('Executable: ', vim.fn.getcwd() .. '/', 'file') end,
     cwd = '${workspaceFolder}',
+    args = function() return vim.split(vim.fn.input 'Args: ', ' ', { trimempty = true }) end,
     stopOnEntry = false,
   },
 }
@@ -68,10 +69,6 @@ require('mason-nvim-dap').setup {
   -- Makes a best effort to setup the various debuggers with
   -- reasonable debug configurations
   automatic_installation = true,
-
-  -- You can provide additional configuration to the handlers,
-  -- see mason-nvim-dap README for more information
-  handlers = {},
 
   -- You'll need to check that you have the required things installed
   -- online, please don't ask me how to install them :)
