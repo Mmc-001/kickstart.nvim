@@ -5,8 +5,11 @@ vim.pack.add { gh 'mfussenegger/nvim-lint' }
 
 local lint = require 'lint'
 lint.linters_by_ft = {
-  markdown = { 'markdownlint' }, -- Make sure to install `markdownlint` via mason / npm
+  markdown = { 'markdownlint' },
+  dockerfile = { 'hadolint' },
+  yaml = { 'yamllint' },
 }
+lint.linters.markdownlint.args = { '--disable', 'MD013', '--stdin' }
 
 -- To allow other plugins to add linters to require('lint').linters_by_ft,
 -- instead set linters_by_ft like this:
