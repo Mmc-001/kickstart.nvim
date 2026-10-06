@@ -7,7 +7,18 @@ do
   require('conform').setup {
     notify_on_error = true,
     format_on_save = function(bufnr)
-      local timeouts = { python = 500, c = 500, cpp = 500, lua = 500, dockerfile = 500, yaml = 500, tex = 3000 }
+      local timeouts = {
+        python = 500,
+        c = 500,
+        cpp = 500,
+        lua = 500,
+        dockerfile = 500,
+        yaml = 500,
+        tex = 3000,
+        sh = 500,
+        bash = 500,
+        zah = 500,
+      }
       local t = timeouts[vim.bo[bufnr].filetype]
       if t then return { timeout_ms = t } end
     end,
@@ -30,6 +41,11 @@ do
 
       -- YAML
       yaml = { 'yamlfmt' },
+
+      -- Shell
+      sh = { 'shfmt' },
+      bash = { 'shfmt' },
+      zsh = { 'shfmt' },
     },
   }
 

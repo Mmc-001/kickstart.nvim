@@ -10,7 +10,7 @@ do
   --    That is to say, every time a new file is opened that is associated with
   --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
   --    function will be executed to configure the current buffer
-    -- Configure maps and optional features per buffer when a server attaches.
+  -- Configure maps and optional features per buffer when a server attaches.
   vim.api.nvim_create_autocmd('LspAttach', {
     group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
     callback = function(event)
@@ -102,6 +102,9 @@ do
       },
     },
 
+    -- Shellscript
+    bashls = {},
+
     -- JSON
     jsonls = {},
 
@@ -164,6 +167,10 @@ do
     -- LaTeX
     'texlab',
     'ltex-ls-plus',
+
+    -- Shell
+    'shellcheck',
+    'shfmt',
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }

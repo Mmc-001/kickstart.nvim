@@ -8,12 +8,18 @@ lint.linters_by_ft = {
   markdown = { 'markdownlint' },
   dockerfile = { 'hadolint' },
   yaml = { 'yamllint' },
+  sh = { 'shellcheck' },
+  bash = { 'shellcheck' },
 }
 lint.linters.markdownlint.args = { '--disable', 'MD013', '--stdin' }
 
 -- Assignment replaces defaults; merge into this table if another plugin adds linters.
 local lint_augroup = vim.api.nvim_create_augroup('lint', { clear = true })
-vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'InsertLeave' }, {
+vim.api.nvim_create_autocmd({
+  'BufEnter',
+  'BufWritePost',
+  'InsertLeave',
+}, {
   group = lint_augroup,
   callback = function()
     -- Skip read-only buffers such as LSP documentation popups.
