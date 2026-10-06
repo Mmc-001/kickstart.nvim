@@ -1,7 +1,4 @@
--- ============================================================
--- LATEX
--- VimTeX editing / compilation / SyncTeX
--- ============================================================
+-- LaTeX editing, latexmk compilation, PDF viewing, and semantic diagnostics.
 
 local util = require 'custom.util'
 
@@ -9,7 +6,7 @@ vim.pack.add {
   util.gh 'lervag/vimtex',
 }
 
--- VimTeX: compilation, PDF viewing, inverse search, etc.
+-- VimTeX handles compilation and SyncTeX; macOS uses Skim, other systems Zathura.
 vim.g.vimtex_view_method = vim.fn.has 'mac' == 1 and 'skim' or 'zathura'
 vim.g.vimtex_view_skim_sync = 1
 vim.g.vimtex_view_skim_activate = 1
@@ -30,10 +27,10 @@ vim.g.vimtex_compiler_latexmk = {
 
 vim.g.vimtex_quickfix_mode = 0
 
--- Avoid VimTeX mappings overriding your own <localleader> mappings.
+-- Uncomment to disable VimTeX's mappings if they conflict with yours.
 -- vim.g.vimtex_mappings_enabled = 0
 
--- texlab: semantic LaTeX LSP only.
+-- texlab provides semantic features; VimTeX remains responsible for building.
 vim.lsp.config('texlab', {
   filetypes = { 'tex', 'plaintex', 'bib' },
 
@@ -58,7 +55,7 @@ vim.lsp.config('texlab', {
   },
 })
 
--- LTeX+: grammar/spelling diagnostics for LaTeX.
+-- LTeX+ adds grammar and spelling diagnostics on save.
 vim.lsp.config('ltex_plus', {
   filetypes = { 'tex', 'plaintex' },
 

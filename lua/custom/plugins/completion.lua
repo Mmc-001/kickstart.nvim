@@ -1,59 +1,25 @@
--- ============================================================
--- AUTOCOMPLETE & SNIPPETS
--- blink.cmp and snippets setup
--- ============================================================
+-- Completion sources, snippet expansion, and signature help.
 
 local gh = require('custom.util').gh
 
 do
-  -- [[ Snippet Engine ]]
-
-  -- NOTE: You can also specify plugin using a version range for its git tag.
-  --  See `:help vim.version.range()` for more info
-
-  -- `friendly-snippets` contains a variety of premade snippets.
-  --    See the README about individual language/framework/plugin snippets:
-  --    https://github.com/rafamadriz/friendly-snippets
-  --
+  -- friendly-snippets supplies reusable snippets for many languages.
   vim.pack.add { gh 'rafamadriz/friendly-snippets' }
 
-  -- [[ Autocomplete Engine ]]
   vim.pack.add { { src = gh 'saghen/blink.cmp', version = vim.version.range '1.*' } }
   require('blink.cmp').setup {
     keymap = {
-      -- 'default' (recommended) for mappings similar to built-in completions
-      --   <c-y> to accept ([y]es) the completion.
-      --    This will auto-import if your LSP supports it.
-      --    This will expand snippets if the LSP sent a snippet.
-      -- 'super-tab' for tab to accept
-      -- 'enter' for enter to accept
-      -- 'none' for no mappings
-      --
-      -- For an understanding of why the 'default' preset is recommended,
-      -- you will need to read `:help ins-completion`
-      --
-      -- No, but seriously. Please read `:help ins-completion`, it is really good!
-      --
-      -- All presets have the following mappings:
-      -- <tab>/<s-tab>: move to right/left of your snippet expansion
-      -- <c-space>: Open menu or open docs if already open
-      -- <c-n>/<c-p> or <up>/<down>: Select next/previous item
-      -- <c-e>: Hide menu
-      -- <c-k>: Toggle signature help
-      --
-      -- See `:help blink-cmp-config-keymap` for defining your own keymap
+      -- Built-in completion-like mappings; see `:help ins-completion`.
       preset = 'default',
     },
 
     appearance = {
-      -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
-      -- Adjusts spacing to ensure icons are aligned
+      -- Match icon spacing to the Nerd Font variant used by the terminal.
       nerd_font_variant = 'mono',
     },
 
     completion = {
-      -- By default, you may press `<c-space>` to show the documentation.
-      -- Optionally, set `auto_show = true` to show the documentation after a delay.
+      -- Documentation stays manual via `<C-space>` to reduce visual noise.
       documentation = { auto_show = false, auto_show_delay_ms = 500 },
     },
 
@@ -82,16 +48,9 @@ do
 
     snippets = { preset = 'default' },
 
-    -- Blink.cmp includes an optional, recommended rust fuzzy matcher,
-    -- which automatically downloads a prebuilt binary when enabled.
-    --
-    -- By default, we use the Lua implementation instead, but you may enable
-    -- the rust implementation via `'prefer_rust_with_warning'`
-    --
-    -- See `:help blink-cmp-config-fuzzy` for more information
+    -- Prefer the Rust matcher when available, with a warning and Lua fallback.
     fuzzy = { implementation = 'prefer_rust_with_warning' },
 
-    -- Shows a signature help window while you type arguments for a function
     signature = { enabled = true },
   }
 end

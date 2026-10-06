@@ -1,3 +1,4 @@
+-- Report Neovim and external tools required by this configuration.
 local M = {}
 
 function M.check()

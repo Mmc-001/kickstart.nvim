@@ -1,21 +1,13 @@
--- ============================================================
--- TREESITTER
--- Parser installation, syntax highlighting, folds, indentation
--- ============================================================
+-- Treesitter parser installation plus syntax highlighting and indentation.
 
 local gh = require('custom.util').gh
 
 do
-  -- [[ Configure Treesitter ]]
-  --  Used to highlight, edit, and navigate code
-  --
-  --  See `:help nvim-treesitter-intro`
-
-  -- NOTE: You can also specify a branch or a specific commit
+  -- Parsers are installed on demand for supported filetypes.
   vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
   if vim.fn.executable 'tree-sitter' == 0 then vim.notify('nvim-treesitter: tree-sitter-cli not found; parser installs will fail', vim.log.levels.WARN) end
 
-  -- Ensure basic parsers are installed
+  -- Install the languages used most often in this configuration.
   local parsers = {
     'bash',
     'bibtex',
@@ -26,7 +18,7 @@ do
     'dockerfile',
     'html',
     'json',
-    -- 'latex',
+    -- LaTeX is handled by VimTeX/texlab.
     'lua',
     'luadoc',
     'markdown',
@@ -51,25 +43,21 @@ do
   ---@param buf integer
   ---@param language string
   local function treesitter_try_attach(buf, language)
-    -- Check if a parser exists and load it
+    -- Load the parser if it is available locally.
     if not vim.treesitter.language.add(language) then return end
 
-    -- Check if the buffer is valid (might not be after install completes)
+    -- Installation is asynchronous, so the buffer may have disappeared.
     if not vim.api.nvim_buf_is_valid(buf) then return end
 
-    -- Enable syntax highlighting and other treesitter features
     vim.treesitter.start(buf, language)
 
-    -- Enable treesitter based folds
-    -- For more info on folds see `:help folds`
+    -- Folds remain on Vim's default behavior until these options are enabled.
     -- vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
     -- vim.wo.foldmethod = 'expr'
 
-    -- Check if treesitter indentation is available for this language, and if so enable it
-    -- in case there is no indent query, the indentexpr will fallback to the vim's built in one
+    -- Use Treesitter indentation only where the language provides an indent query.
     local has_indent_query = vim.treesitter.query.get(language, 'indents') ~= nil
 
-    -- Enable treesitter based indentation
     if has_indent_query then vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()" end
   end
 
@@ -86,13 +74,13 @@ do
       local installed_parsers = require('nvim-treesitter').get_installed 'parsers'
 
       if vim.tbl_contains(installed_parsers, language) then
-        -- Enable the parser if it is already installed
+        -- Attach immediately when the parser is already installed.
         treesitter_try_attach(buf, language)
       elseif vim.tbl_contains(available_parsers, language) then
-        -- If a parser is available in `nvim-treesitter`, auto-install it and enable it after the installation is done
+        -- Install a known parser on demand, then attach it to this buffer.
         require('nvim-treesitter').install(language):await(function() treesitter_try_attach(buf, language) end)
       else
-        -- Try to enable treesitter features in case the parser exists but is not available from `nvim-treesitter`
+        -- A system or third-party parser may still be available.
         treesitter_try_attach(buf, language)
       end
     end,

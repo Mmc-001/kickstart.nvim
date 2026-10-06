@@ -1,4 +1,4 @@
--- TODO: comment for clarity and decoration
+-- Entry point: load core settings and plugin modules in dependency order.
 vim.loader.enable()
 
 local modules = {
@@ -17,6 +17,7 @@ local modules = {
   'custom.plugins.latex',
 }
 local function load(m)
+  -- Keep one broken optional module from preventing the rest of the config from loading.
   local ok, err = xpcall(require, debug.traceback, m)
   if not ok then vim.notify(('Failed to load %s:\n%s'):format(m, err), vim.log.levels.ERROR) end
 end
@@ -28,6 +29,7 @@ end
 vim.api.nvim_create_autocmd('UIEnter', {
   once = true,
   callback = function()
+    -- DAP is loaded after the first UI event so startup stays lighter.
     vim.schedule(function() load 'custom.plugins.debug' end)
   end,
 })

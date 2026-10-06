@@ -1,12 +1,8 @@
--- ============================================================
--- FORMATTING
--- conform.nvim setup and keymap
--- ============================================================
+-- Formatting with conform.nvim, including conservative save-time timeouts.
 
 local gh = require('custom.util').gh
 
 do
-  -- [[ Formatting ]]
   vim.pack.add { gh 'stevearc/conform.nvim' }
   require('conform').setup {
     notify_on_error = true,
@@ -16,9 +12,8 @@ do
       if t then return { timeout_ms = t } end
     end,
     default_format_opts = {
-      lsp_format = 'fallback', -- Use external formatters if configured below, otherwise use LSP formatting. Set to `false` to disable LSP formatting entirely.
+      lsp_format = 'fallback', -- Use a configured external formatter first, then fall back to LSP.
     },
-    -- You can also specify external formatters in here.
     formatters_by_ft = {
       -- Python
       python = { 'ruff_organize_imports', 'ruff_format' },
