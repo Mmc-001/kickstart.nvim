@@ -22,6 +22,8 @@ do
 
   vim.o.breakindent = true
 
+  vim.o.winborder = 'rounded'
+
   vim.o.undofile = true
 
   vim.o.ignorecase = true
