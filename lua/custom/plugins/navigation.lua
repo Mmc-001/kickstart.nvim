@@ -95,6 +95,7 @@ do
 
   -- Oil edits directories as buffers; hidden files are visible and deletes use trash.
   vim.pack.add { gh 'stevearc/oil.nvim' }
+  vim.pack.add { gh 'refractalize/oil-git-status.nvim' }
   require('oil').setup {
     columns = {
       'icon',
@@ -106,9 +107,13 @@ do
       show_hidden = true,
       natural_order = 'fast',
     },
+    win_options = {
+      signcolumn = 'yes:2',
+    },
     delete_to_trash = true,
   }
   vim.keymap.set('n', '-', '<cmd>Oil<CR>', { desc = 'Open parent directory' })
+  require('oil-git-status').setup()
 
   -- Delete buffers without closing their windows.
   require('mini.bufremove').setup()

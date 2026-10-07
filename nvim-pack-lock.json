@@ -98,6 +98,10 @@
       "src": "https://github.com/nvim-treesitter/nvim-treesitter",
       "version": "'main'"
     },
+    "oil-git-status.nvim": {
+      "rev": "a3e2ccb00cb8822115e28a9a1791eda051d940c9",
+      "src": "https://github.com/refractalize/oil-git-status.nvim"
+    },
     "oil.nvim": {
       "rev": "b73018b75affd13fa38e2fc94ef753b465f770d7",
       "src": "https://github.com/stevearc/oil.nvim"
@@ -129,6 +133,10 @@
     "vimtex": {
       "rev": "42dcf1699e45725bd3b366ecab2ae06f6e0f8118",
       "src": "https://github.com/lervag/vimtex"
+    },
+    "virt-counter.nvim": {
+      "rev": "419ea445c0b979caa6b34da8a06056c1abb40047",
+      "src": "https://github.com/tzhouhc/virt-counter.nvim"
     },
     "which-key.nvim": {
       "rev": "3aab2147e74890957785941f0c1ad87d0a44c15a",

@@ -66,5 +66,18 @@ do
     end,
   })
 
+  -- Char/line counter
+  vim.pack.add { gh 'tzhouhc/virt-counter.nvim' }
+  require('virt-counter').setup {
+    preset = 'pill',
+    pos = 'right_align',
+    highlight_group = 'TodoBgTODO',
+    button = {
+      left = '',
+      right = '',
+      edge_highlight_group = 'TodoFgTODO', -- workaround to show an uninverted colorscheme for the edges
+    },
+  }
+
   vim.keymap.set('n', '<leader>wt', MiniTrailspace.trim, { desc = 'Trailing [W]hitespace [T]rim' })
 end
