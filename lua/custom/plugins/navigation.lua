@@ -49,7 +49,7 @@ do
 
   -- Add picker-backed LSP maps only to buffers with an attached server.
   vim.api.nvim_create_autocmd('LspAttach', {
-    group = vim.api.nvim_create_augroup('telescope-lsp-attach', { clear = true }),
+    group = vim.api.nvim_create_augroup('telescope-lsp-mappings', { clear = true }),
     callback = function(event)
       local buf = event.buf
 

@@ -2,6 +2,8 @@
 local util = require 'custom.util'
 do
   -- [[ LSP Configuration ]]
+  local lsp_attach_augroup = vim.api.nvim_create_augroup('lsp-attach', { clear = true })
+
   -- Useful status updates for LSP.
   vim.pack.add { util.gh 'j-hui/fidget.nvim' }
   require('fidget').setup {}
@@ -12,7 +14,7 @@ do
   --    function will be executed to configure the current buffer
   -- Configure maps and optional features per buffer when a server attaches.
   vim.api.nvim_create_autocmd('LspAttach', {
-    group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
+    group = lsp_attach_augroup,
     callback = function(event)
       -- Keep LSP mappings buffer-local and give them a common which-key prefix.
       local map = function(keys, func, desc, mode)
@@ -32,28 +34,36 @@ do
       if client and client.name == 'ltex_plus' then
         vim.diagnostic.config({ underline = true, virtual_text = false }, vim.lsp.diagnostic.get_namespace(client.id))
       end
-      if client and client:supports_method('textDocument/documentHighlight', event.buf) then
-        local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight' .. event.buf, { clear = false })
-        vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-          buffer = event.buf,
-          group = highlight_augroup,
-          callback = vim.lsp.buf.document_highlight,
-        })
+      local highlight_augroup = vim.api.nvim_create_augroup('lsp-document-highlight', { clear = false })
 
-        vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-          buffer = event.buf,
-          group = highlight_augroup,
-          callback = vim.lsp.buf.clear_references,
-        })
+      vim.api.nvim_clear_autocmds {
+        group = highlight_augroup,
+        buffer = event.buf,
+      }
 
-        vim.api.nvim_create_autocmd('LspDetach', {
-          group = vim.api.nvim_create_augroup('kickstart-lsp-detach' .. event.buf, { clear = true }),
-          callback = function(event2)
-            vim.lsp.buf.clear_references()
-            vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
-          end,
-        })
-      end
+      vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+        buffer = event.buf,
+        group = highlight_augroup,
+        callback = vim.lsp.buf.document_highlight,
+      })
+
+      vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+        buffer = event.buf,
+        group = highlight_augroup,
+        callback = vim.lsp.buf.clear_references,
+      })
+
+      vim.api.nvim_create_autocmd('LspDetach', {
+        buffer = event.buf,
+        group = highlight_augroup,
+        callback = function(event2)
+          vim.lsp.buf.clear_references()
+          vim.api.nvim_clear_autocmds {
+            group = highlight_augroup,
+            buffer = event2.buf,
+          }
+        end,
+      })
 
       -- Inlay hints are opt-in because they can make source code visually denser.
       if client and client:supports_method('textDocument/inlayHint', event.buf) then
