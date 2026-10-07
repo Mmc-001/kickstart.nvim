@@ -71,12 +71,17 @@ do
   })
 
   -- Search the current buffer with a compact dropdown picker.
-  vim.keymap.set('n', '<leader>/', function()
-    builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-      winblend = 10,
-      previewer = true,
-    })
-  end, { desc = '[/] Fuzzily search in current buffer' })
+  vim.keymap.set(
+    'n',
+    '<leader>/',
+    function()
+      builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+        winblend = 10,
+        previewer = true,
+      })
+    end,
+    { desc = '[/] Fuzzily search in current buffer' }
+  )
 
   vim.keymap.set(
     'n',
