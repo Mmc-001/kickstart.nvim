@@ -5,7 +5,8 @@ do
   -- Show available key sequences after a prefix such as `<leader>`.
   vim.pack.add { gh 'folke/which-key.nvim' }
   require('which-key').setup {
-    delay = 0,
+    preset = 'modern',
+    delay = 250,
     icons = { mappings = vim.g.have_nerd_font },
     spec = {
       { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
