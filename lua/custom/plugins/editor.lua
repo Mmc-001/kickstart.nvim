@@ -50,6 +50,12 @@ do
   require('mini.trailspace').setup()
   vim.keymap.set('n', '<leader>wt', MiniTrailspace.trim, { desc = 'Trailing [W]hitespace [T]rim' })
 
+  -- Renaming variables
+  vim.pack.add { gh 'smjonas/inc-rename.nvim' }
+  ---@diagnostic disable-next-line: missing-parameter
+  require('inc_rename').setup()
+  vim.keymap.set('n', '<leader>Rn', ':IncRename ', { desc = '[R]e[n]ame' })
+
   -- Configure CSV/TSV columns only when such a buffer is opened.
   vim.pack.add { gh 'hat0uma/csvview.nvim' }
   vim.api.nvim_create_autocmd('FileType', {
@@ -83,5 +89,4 @@ do
       edge_highlight_group = 'TodoFgTODO', -- workaround to show an uninverted colorscheme for the edges
     },
   }
-
 end
