@@ -46,7 +46,9 @@ do
   vim.pack.add { gh 'lukas-reineke/indent-blankline.nvim' }
   require('ibl').setup {}
 
+  -- Mini trailspace remove
   require('mini.trailspace').setup()
+  vim.keymap.set('n', '<leader>wt', MiniTrailspace.trim, { desc = 'Trailing [W]hitespace [T]rim' })
 
   -- Configure CSV/TSV columns only when such a buffer is opened.
   vim.pack.add { gh 'hat0uma/csvview.nvim' }
@@ -82,5 +84,4 @@ do
     },
   }
 
-  vim.keymap.set('n', '<leader>wt', MiniTrailspace.trim, { desc = 'Trailing [W]hitespace [T]rim' })
 end
