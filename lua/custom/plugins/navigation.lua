@@ -118,10 +118,10 @@ do
     delete_to_trash = true,
   }
   vim.keymap.set('n', '-', '<cmd>Oil<CR>', { desc = 'Open parent directory' })
+  ---@diagnostic disable-next-line: missing-parameter
   require('oil-git-status').setup()
 
   -- Delete buffers without closing their windows.
   require('mini.bufremove').setup()
-
   vim.keymap.set('n', '<leader>rb', function() MiniBufremove.delete(0) end, { desc = '[R]emove [B]uffer' })
 end
