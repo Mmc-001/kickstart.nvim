@@ -30,7 +30,10 @@ do
   -- Add, delete, or replace brackets and quotes around text.
   require('mini.surround').setup()
 
-  require('mini.operators').setup { exchange = { prefix = 'gX' }, replace = { prefix = 'g/' } }
+  require('mini.operators').setup {
+    exchange = { prefix = 'gX' },
+    replace = { prefix = 'g/' },
+  }
   require('mini.splitjoin').setup()
 
   require('mini.comment').setup() -- gcc / gc — commenting, zero extra dependency
